@@ -23,6 +23,11 @@ class Vector {
         return rst
     }
 
+    // Given a R3 vector adds a scalar to each dimension
+    static scalarSum(vec, num){
+        return new Vector(vec.x + num, vec.y + num, vec.z + num)
+    }
+
     // Given 2 R3 Vectors apply the substract operation
     static substract(vecA, vecB){
         let rst = new Vector(0, 0, 0)
@@ -34,6 +39,11 @@ class Vector {
         return rst
     }
 
+    // Given a R3 vector substracts a scalar to each dimension
+    static scalarSubstract(vec, num){
+        return new Vector(vec.x - num, vec.y - num, vec.z - num)
+    }
+
     // Given 2 R3 Vectors apply the multiply operation
     static mul(vecA, vecB){
         let rst = 0
@@ -43,6 +53,12 @@ class Vector {
         rst += vecA.z * vecB.z
 
         return rst
+    }
+
+    // Given 2 R3 Vectors apply the multiply operation but between each 
+    // component and generates a vector
+    static mul_vector(vecA, vecB){
+        return new Vector(vecA.x * vecB.x, vecA.y * vecB.y, vecA.z * vecB.z)
     }
 
     // Given a R3 vector apply the scalar operation to it
@@ -121,6 +137,42 @@ class Vector {
         return Vector.parallelogramArea(vecA, vecB) / 2.0
     }
 
+    // Returns the zero vector
+    static zero(){
+        return new Vector(0, 0, 0)
+    }
+
+    // Returns the rotation of a vector over Z axis in R3
+    // Remember this is the same as R2 rotation
+    rotationZAxis(angle){
+        let rst = this.copy()
+
+        rst.x = rst.x * Math.cos(angle) - rst.y * Math.sin(angle)
+        rst.y = rst.x * Math.sin(angle) + rst.y * Math.cos(angle)
+
+        return rst
+    }
+
+    // Returns the rotation of a vector over Y axis in R3
+    rotationYAxis(angle){
+        let rst = this.copy()
+
+        rst.x = rst.x * Math.cos(angle) + rst.z * Math.sin(angle)
+        rst.z = -rst.x * Math.sin(angle) + rst.z * Math.cos(angle)
+
+        return rst
+    }
+
+    // Returns the rotation of a vector over X axis in R3
+    rotationXAxis(angle){
+        let rst = this.copy()
+
+        rst.y = rst.y * Math.cos(angle) - rst.z * Math.sin(angle)
+        rst.z = rst.y * Math.sin(angle) + rst.z * Math.cos(angle)
+
+        return rst
+    }
+
     // Returns the module of a R3 vector
     module(){
         let sum = Vector.mul(this, this)
@@ -128,8 +180,16 @@ class Vector {
         return Math.sqrt(sum)
     }
 
+    // Set the values of the vector
+    set(x, y, z){
+        this.x = x
+        this.y = y
+        this.z = z
+    }
+
     // Returns a parallel r3 vector which module is one
-    getUnitVector(){
+    // If is a zero vector, will return zero vector
+    normalize(){
         let rst = this.copy()
         let mod = this.module()
 
@@ -139,8 +199,12 @@ class Vector {
             return Vector.scalarMul(rst, 1.0 / mod)
         } catch (error) {
             console.error(error)
-            return undefined
+            return new Vector(0, 0, 0)
         }
+    }
+
+    isZero(){
+        return (this.x + this.y + this.z) === 0
     }
 
     // Returns a copy of the vector
