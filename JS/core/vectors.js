@@ -97,7 +97,7 @@ class Vector {
             return Math.acos(rst)
         } catch (error) {
             console.error(error)
-            return undefined
+            return 0
         }
     }
 
@@ -118,7 +118,7 @@ class Vector {
             return Vector.scalarMul(base, scalar)
         } catch (error) {
             console.error(error)
-            return undefined
+            return new Vector(0, 0, 0)
         }
     }
 
