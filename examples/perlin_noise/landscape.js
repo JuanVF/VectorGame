@@ -6,29 +6,31 @@ class Landscape extends GameObject {
     init(context){
         this.position.set(500, 250, 0)
         this.dimensions = context.dimensions
-        this.delay = 10
 
+        this.delay = 1000
         this.time = new Date().getTime()
-        this.perlin = new PerlinNoise()
-        this.perlin.freq = 0.03
+
+        noise.seed(Math.random())
+
+        this.counter = 0
 
         context.triggerBG()
     }
 
     loop(context){
-        if (this.time + this.delay < new Date().getTime()){
+        if (this.counter < 10 && this.time + this.delay < new Date().getTime()){
             context.drawBackground()
-            this.perlin.initPermutation()
-    
+
             for (let x = 0; x < this.dimensions.x; x++){
                 for (let y = 0; y < this.dimensions.y; y++){
                     let color = getRandomColor()
-                    color.a = this.perlin.noise2D(new Vector(x, y))
-
+                    color.a = noise.simplex3(x / 100, y / 100, this.counter)
+    
                     context.drawPixel(new Vector(x, y), color)
                 }   
             }
-
+    
+            this.counter += 0.1
             this.time = new Date().getTime()
         }
     }

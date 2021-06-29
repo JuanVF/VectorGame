@@ -5,6 +5,12 @@ class Vector {
         ["UNIT_VECTOR","Vector: cannot get unit vector from Zero Vector"]
     ])
 
+    static unitVectors = new Map([
+        ['x', new Vector(1, 0, 0)],
+        ['y', new Vector(0, 1, 0)],
+        ['z', new Vector(0, 0, 1)]
+    ])
+
     // Creates a new R3 vector
     constructor(x, y, z){
         this.x = x || 0
@@ -140,6 +146,11 @@ class Vector {
     // Returns the zero vector
     static zero(){
         return new Vector(0, 0, 0)
+    }
+
+    // Returns unit vectors based on axis
+    static unit(axis){
+        return Vector.unitVectors.get(axis)
     }
 
     // Returns the rotation of a vector over Z axis in R3

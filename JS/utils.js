@@ -19,3 +19,20 @@ const collide = (value, min, max)=>{
 
     return rst == min || rst == max
 }
+
+const toBinary = (num, spaces)=>{
+    let bin = num.toString(2)
+    let list = []
+
+    let dif = Math.abs(bin.length - spaces)
+
+    for (let i = 0; i < bin.length; i++){
+        list.push(parseInt(bin[i]))
+    }
+
+    for (let i = 0; i < dif; i++){
+        list.unshift(0)
+    }
+
+    return list
+}
