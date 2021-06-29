@@ -4,6 +4,7 @@ class GameObject {
         this.speed = new Vector(0, 0, 0)
         this.acceleration = new Vector(0, 0, 0)
         this.speedLimit = 0
+        this.mass = 1
 
         this.tag = ""
         this.ID = ID
@@ -12,7 +13,7 @@ class GameObject {
     }
 
     // This function will be executed first and once
-    // This function can be async
+    // This function can be async in order to load some media
     init(context){
     }
 
@@ -24,6 +25,40 @@ class GameObject {
     limitSpeed(){
         if (this.speed.module() > this.speedLimit)
             this.speed = this.speedLimit
+    }
+
+    // This will update the velocity and position of the object
+    update(){
+        this.speed = Vector.sum(this.speed, this.acceleration)
+        this.position = Vector.sum(this.position, this.speed)
+        this.acceleration = Vector.zero()
+    }
+
+    // This will apply a force (vector) to the this object
+    // By default the mass of a Game Object
+    applyForce(force){
+        this.acceleration = Vector.scalarMul(force, 1.0 / this.mass)
+    }
+
+    // If the object collide with the "walls" it will receive Newtons power
+    // This only works in R2
+    applyWallForce(dimensions){
+        let collideX = collide(this.position.x, 0, dimensions.x)
+        let collideY = collide(this.position.x, 0, dimensions.x)
+
+        if (collideX || collideY){
+            let oposite = Vector.scalarMul(this.speed, -0.5 )
+            this.speed = Vector.zero()
+
+            this.applyForce(oposite)
+        }
+    }
+
+    // This will cast the position of the player to not overflow a certain dimension
+    castPosition(dimensions){
+        this.position.x = clamp(this.position.x, 0, dimensions.x)
+        this.position.y = clamp(this.position.y, 0, dimensions.y)
+        this.position.z = clamp(this.position.z, 0, dimensions.z)
     }
 
     // This method will return an image

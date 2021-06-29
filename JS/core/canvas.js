@@ -11,15 +11,17 @@ class Canvas{
         this.canvasObject = document.getElementById(id)
         this.canvasContext = this.canvasObject.getContext('2d')
         this.isRunning = false;
+        this.shouldDrawBG = true
         
         this.id = id
         this.width = width
         this.height = height
+        this.dimensions = new Vector(width, height, 0)
 
         this.canvasObject.width = width
         this.canvasObject.height = height
 
-        this.bgColor = [255, 255, 255, 1]
+        this.bgColor = Color.white()
 
         this.gameObjects = []
         this.gameObjectsByTag = new Map([])
@@ -30,6 +32,7 @@ class Canvas{
 
     // This starts the game loop
     async run(){
+        this.drawBackground()
         this.isRunning = true;
 
         for (let i = 0; i < this.gameObjects.length; i++){
@@ -47,7 +50,7 @@ class Canvas{
 
     // This loop will run every frame
     gameLoop(){
-        this.drawBackground()
+        if (this.shouldDrawBG) this.drawBackground()
 
         for (let i = 0; i < this.gameObjects.length; i++) this.gameObjects[i].loop(this)
         
@@ -99,28 +102,36 @@ class Canvas{
         this.mousePosition.set(event.offsetX, event.offsetY, 0)
     }
 
+    // Trigger the state of redraw the background
+    triggerBG(){
+        this.shouldDrawBG = !this.shouldDrawBG
+    }
+
     // Renders the background
     drawBackground(){
-        let r = this.bgColor[0]
-        let g = this.bgColor[1]
-        let b = this.bgColor[2]
-        let a = this.bgColor[3]
-
-        this.canvasContext.beginPath()
-        this.canvasContext.rect(0, 0, this.width, this.height)
-        this.canvasContext.fillStyle = `rgba(${r},${g},${b},${a})`
-        this.canvasContext.fill()
+        this.drawRect(Vector.zero(), this.dimensions, this.bgColor)
     }
 
     // Sets the background color
     setBackgroundColor(r, g, b, a){
-        this.bgColor = [r, g, b, a]
+        this.bgColor = new Color(r, g, b, a)
+    }
+
+    // Draws a rect
+    drawRect(initPos, endPos, color){
+        endPos.x = Math.abs(initPos.x - endPos.x)
+        endPos.y = Math.abs(initPos.y - endPos.y)
+
+        this.canvasContext.beginPath()
+        this.canvasContext.rect(initPos.x, initPos.y, endPos.x, endPos.y)
+        this.canvasContext.fillStyle = color.getRGBA()
+        this.canvasContext.fill()
     }
 
     // This functions draws a line between two points
     drawLine(initPos, endPos, color){
         this.canvasContext.beginPath()
-        this.canvasContext.strokeStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${color[3]})`
+        this.canvasContext.strokeStyle = color.getRGBA()
 
         this.canvasContext.moveTo(initPos.x, initPos.y)
         this.canvasContext.lineTo(endPos.x, endPos.y)
@@ -131,7 +142,7 @@ class Canvas{
     // This functions draws a circle in a certain position
     drawCircle(pos, color, size){
         this.canvasContext.beginPath()
-        this.canvasContext.fillStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${color[3]})`
+        this.canvasContext.fillStyle = color.getRGBA()
         this.canvasContext.arc(pos.x, pos.y, size, 0, 2 * Math.PI)
         this.canvasContext.fill()
     }
@@ -142,5 +153,13 @@ class Canvas{
                 figure, 
                 position.x, position.y,
                 figure.width, figure.height)
+    }
+
+    // Draws a single pixel on canvas
+    drawPixel(position, color){
+        this.canvasContext.beginPath()
+        this.canvasContext.fillRect(position.x, position.y, 1, 1)
+        this.canvasContext.fillStyle = color.getRGBA()
+        this.canvasContext.fill()
     }
 }

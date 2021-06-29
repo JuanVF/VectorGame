@@ -10,16 +10,18 @@ class Node extends GameObject {
         this.position.set(getRandom(0, context.width), getRandom(0, context.height), 0)
         this.color = getRandomColor()
         this.size = getRandom(0, 5)
-        this.accelerationRate = getRandom(400, 3000) * 100
+        this.accelerationRate = getRandom(100, 150) * 10000
 
         this.moveTo = new Vector(getRandom(0, context.width), getRandom(0, context.height), 0)
         this.selected = []
 
         this.lastUpdated = new Date().getTime()
-        this.delay = Math.ceil(getRandom(100, 1000))
+        this.delay = Math.ceil(getRandom(5000, 10000))
 
-        this.lastColorUpdated = new Date().getTime()
+        this.lastColorUpdated = 0
         this.delayColor = Math.ceil(getRandom(300, 5000))
+
+        this.connectionRate = 1
     }
 
     // This function will be executed every frame
@@ -37,7 +39,7 @@ class Node extends GameObject {
             this.speed = Vector.zero()
 
             this.moveTo = new Vector(getRandom(0, context.width), getRandom(0, context.height), 0)
-            this.accelerationRate = getRandom(getRandom(100, 1000), 5000) * 100
+            this.accelerationRate = getRandom(50, 100) * 10000
         }
 
         let distance = this.acceleration.module() / this.accelerationRate
@@ -65,12 +67,12 @@ class Node extends GameObject {
                 return vecA.module() - vecB.module()
             })
 
-            for (let i = 0; i < Math.ceil(getRandom(0, dragonFlies.length - 1)); i++){
+            for (let i = 0; i < Math.ceil(getRandom(0, dragonFlies.length * this.connectionRate)); i++){
                 this.selected.push(dragonFlies[i])
             }
             
             this.lastUpdated = new Date().getTime()
-            this.delay = Math.ceil(getRandom(100, 1000))
+            this.delay = Math.ceil(getRandom(5000, 10000))
         }
         
         for (let i = 0; i < this.selected.length; i++){
@@ -80,18 +82,12 @@ class Node extends GameObject {
 
     changeStatus(context){
         if (this.lastColorUpdated + this.delayColor < new Date().getTime()){
-            let center = new Vector(context.width / 2.0, context.height / 2.0, 0)
-            
-            let distance = Vector.substract(center, this.position).module()
-
             this.color = getRandomColor()
             this.size = getRandom(0, 5)
 
-            let centerDist = center.module()
+            this.color.a = this.selected.length / (context.findByTag(this.tag).length * this.connectionRate)
 
-            this.color[3] = 0.4 - 0.4*(distance / centerDist)
-
-            this.delayColor = Math.ceil(getRandom(300, 5000))
+            this.delayColor = Math.ceil(getRandom(1000, 10000))
             this.lastColorUpdated = new Date().getTime()
         }
     }

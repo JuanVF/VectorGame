@@ -7,9 +7,9 @@ class Vector {
 
     // Creates a new R3 vector
     constructor(x, y, z){
-        this.x = x
-        this.y = y
-        this.z = z
+        this.x = x || 0
+        this.y = y || 0
+        this.z = z || 0
     }
 
     // Given 2 R3 Vectors apply the sum operation
@@ -182,9 +182,9 @@ class Vector {
 
     // Set the values of the vector
     set(x, y, z){
-        this.x = x
-        this.y = y
-        this.z = z
+        this.x = x || 0
+        this.y = y || 0
+        this.z = z || 0
     }
 
     // Returns a parallel r3 vector which module is one

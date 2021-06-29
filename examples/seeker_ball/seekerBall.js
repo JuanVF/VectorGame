@@ -14,8 +14,8 @@ class Ball extends GameObject {
     // This function will be executed every frame
     loop(context){
         const opacity = 1
-        const black = [0, 0, 0, opacity]
-        const blue = [0, 0, 255, opacity]
+        const black = new Color(0, 0, 0, opacity)
+        const blue = new Color(0, 0, 255, opacity)
 
         const refPos = context.mousePosition
 
