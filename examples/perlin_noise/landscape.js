@@ -6,31 +6,42 @@ class Landscape extends GameObject {
     init(context){
         this.position.set(500, 250, 0)
         this.dimensions = context.dimensions
+        this.delay = 10
 
-        this.delay = 1000
         this.time = new Date().getTime()
 
         noise.seed(Math.random())
-
+        
         this.counter = 0
+        this.zoomRate = 0
 
         context.triggerBG()
     }
 
     loop(context){
-        if (this.counter < 10 && this.time + this.delay < new Date().getTime()){
+        if (this.time + this.delay < new Date().getTime()){
             context.drawBackground()
+            let rate = 10
 
-            for (let x = 0; x < this.dimensions.x; x++){
-                for (let y = 0; y < this.dimensions.y; y++){
-                    let color = getRandomColor()
-                    color.a = noise.simplex3(x / 100, y / 100, this.counter)
-    
-                    context.drawPixel(new Vector(x, y), color)
+            for (let x = 1; x < this.dimensions.x; x += rate){
+                for (let y = 1; y < this.dimensions.y; y += rate){
+                    let position = new Vector(x, y)
+                    let scalar = noise.simplex3(x / this.zoomRate, y / this.zoomRate, this.counter)
+                    let direction = new Vector(scalar + 1, scalar)
+                    let color = getRandomColorP(x/ this.zoomRate, y/ this.zoomRate, this.counter)
+                
+                    direction = Vector.scalarMul(direction, rate * scalar)
+                    direction = Vector.sum(direction, position)
+                    direction.set(Math.floor(direction.x), Math.floor(direction.y), 0)
+                    
+                    context.drawLine(position, direction, color)
                 }   
             }
-    
-            this.counter += 0.1
+
+            this.counter += 0.05
+
+            this.zoomRate = Math.sin(this.counter) + 700
+
             this.time = new Date().getTime()
         }
     }

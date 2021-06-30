@@ -3,7 +3,7 @@ class GameObject {
         this.position = new Vector(0, 0, 0)
         this.speed = new Vector(0, 0, 0)
         this.acceleration = new Vector(0, 0, 0)
-        this.speedLimit = 0
+        this.speedLimit = Infinity
         this.mass = 1
 
         this.tag = ""
@@ -37,7 +37,8 @@ class GameObject {
     // This will apply a force (vector) to the this object
     // By default the mass of a Game Object
     applyForce(force){
-        this.acceleration = Vector.scalarMul(force, 1.0 / this.mass)
+        let rst = Vector.scalarMul(force, 1.0 / this.mass)
+        this.acceleration = Vector.sum(this.acceleration,rst)
     }
 
     // If the object collide with the "walls" it will receive Newtons power
@@ -50,7 +51,7 @@ class GameObject {
             let oposite = Vector.scalarMul(this.speed, -0.5 )
             this.speed = Vector.zero()
 
-            this.applyForce(oposite)
+            this.applyForce(Vector.scalarMul(oposite, 0.01))
         }
     }
 

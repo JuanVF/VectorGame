@@ -1,4 +1,4 @@
-const canvas = new Canvas('game-canvas', window.innerWidth * 0.9, window.innerHeight * 0.9)
+const canvas = new Canvas('game-canvas', window.innerWidth * 0.9, window.innerHeight * 0.9, true)
 
 canvas.setBackgroundColor(0, 0, 50, 1)
 

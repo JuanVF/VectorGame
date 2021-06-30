@@ -10,6 +10,14 @@ const getRandomColor = ()=>{
     return new Color(r, g, b, getRandom(0, 0.5))
 }
 
+const getRandomColorP = (x, y, seed)=>{
+    let r = Math.ceil(255*noise.simplex3(x, y, seed))
+    let g = Math.ceil(255*noise.simplex3(x+2, y+2, seed))
+    let b = Math.ceil(255*noise.simplex3(x+3, y+3, seed))
+
+    return new Color(r, g, b, 1)
+}
+
 const clamp = (value, min, max)=>{
     return Math.min(Math.max(value, min), max)
 }
@@ -35,4 +43,11 @@ const toBinary = (num, spaces)=>{
     }
 
     return list
+}
+
+// Choose in a random way one of the 2 values
+const choose = (A, B)=>{
+    let prob = Math.random()
+
+    return (prob > 0.5) ? A : B
 }

@@ -7,9 +7,14 @@ class Canvas{
 
     // Class constructor
     // Needs the object id, the width and height you wanna set
-    constructor(id, width, height){
+    constructor(id, width, height, useAlpha){
         this.canvasObject = document.getElementById(id)
-        this.canvasContext = this.canvasObject.getContext('2d')
+        if (useAlpha){
+            this.canvasContext = this.canvasObject.getContext('2d')
+        }else{
+            this.canvasContext = this.canvasObject.getContext('2d', { alpha: false })
+        }
+
         this.isRunning = false;
         this.shouldDrawBG = true
         
@@ -123,7 +128,9 @@ class Canvas{
         endPos.y = Math.abs(initPos.y - endPos.y)
 
         this.canvasContext.beginPath()
-        this.canvasContext.rect(initPos.x, initPos.y, endPos.x, endPos.y)
+        this.canvasContext.rect(
+            initPos.x, initPos.y, 
+            endPos.x, endPos.y)
         this.canvasContext.fillStyle = color.getRGBA()
         this.canvasContext.fill()
     }
