@@ -15,13 +15,15 @@ class Canvas{
             this.canvasContext = this.canvasObject.getContext('2d', { alpha: false })
         }
 
-        this.isRunning = false;
+        this.isRunning = false
+        this.isOnPause = false
         this.shouldDrawBG = true
         
         this.id = id
         this.width = width
         this.height = height
         this.dimensions = new Vector(width, height, 0)
+        this.offset = new Vector(0, 0, 0)
 
         this.canvasObject.width = width
         this.canvasObject.height = height
@@ -40,14 +42,21 @@ class Canvas{
         this.drawBackground()
         this.isRunning = true;
 
-        for (let i = 0; i < this.gameObjects.length; i++){
+        let amount = this.gameObjects.length
+
+        for (let i = 0; i < amount; i++){
             await this.gameObjects[i].init(this)
         }
 
         this.canvasObject.addEventListener('mousemove', event => {
             this.mouseTracking(event)
         })
+        
+        document.addEventListener("visibilitychange", event => {
+            this.userStateTracking(event)
+        });
 
+        this.counter = false
         window.requestAnimationFrame(()=>{
             this.gameLoop()
         })
@@ -55,9 +64,11 @@ class Canvas{
 
     // This loop will run every frame
     gameLoop(){
-        if (this.shouldDrawBG) this.drawBackground()
-
-        for (let i = 0; i < this.gameObjects.length; i++) this.gameObjects[i].loop(this)
+        if (!this.isOnPause){
+            if (this.shouldDrawBG) this.drawBackground()
+    
+            for (let i = 0; i < this.gameObjects.length; i++) this.gameObjects[i].loop(this)
+        }
         
         // Keeps the fps until the game stop
         if (this.isRunning) window.requestAnimationFrame(()=>{
@@ -78,6 +89,35 @@ class Canvas{
     find(id){
         return this.gameObjectsById.get(id)
     }
+    
+    // Takes out an object from the canvas and also set it null
+    // so the garbage collector will take it
+    destroy(id){
+        if (!this.gameObjectsById.has(id)) return
+
+        let obj = this.gameObjectsById.get(id)
+        this.gameObjectsById.delete(id)
+
+        let tags = this.gameObjectsByTag
+        
+        // We take out the element from the tag map
+        for (let i = 0; i < tags.length; i++){
+            if (tags[i].ID == id){
+                tags.splice(i, 1)
+                break
+            }
+        }
+
+        // We take out the element from the loop list
+        for (let i = 0; i < this.gameObjects.length; i++){
+            if (this.gameObjects[i].ID == id){
+                this.gameObjects.splice(i, 1)
+                break
+            }
+        }
+
+        obj = null
+    }
 
     // This appends a game object to the canvas
     // Throws error if init or loop functions hasn't been defined
@@ -95,9 +135,17 @@ class Canvas{
             
             this.gameObjectsById.set(obj.ID, obj)
             this.gameObjectsByTag.get(obj.tag).push(obj)
+
+            if (this.isRunning) obj.init(this)
         } catch (error) {
             console.error(error)
         }
+    }
+
+    // Translate the center of the canvas
+    setCenter(dimensions){
+        this.offset = dimensions.copy()
+        this.canvasContext.translate(dimensions.x, dimensions.y)
     }
 
     // Tracks the position of the mouse
@@ -107,6 +155,12 @@ class Canvas{
         this.mousePosition.set(event.offsetX, event.offsetY, 0)
     }
 
+    // Tracks when an user exit the window
+    // if true canvas will pause execution
+    userStateTracking(event){
+        this.isOnPause = document.hidden
+    }
+
     // Trigger the state of redraw the background
     triggerBG(){
         this.shouldDrawBG = !this.shouldDrawBG
@@ -114,7 +168,7 @@ class Canvas{
 
     // Renders the background
     drawBackground(){
-        this.drawRect(Vector.zero(), this.dimensions, this.bgColor)
+        this.drawRect(Vector.substract(Vector.zero(), this.offset.copy()), this.dimensions.copy(), this.bgColor)
     }
 
     // Sets the background color

@@ -157,9 +157,9 @@ class Vector {
     // Remember this is the same as R2 rotation
     rotationZAxis(angle){
         let rst = this.copy()
-
-        rst.x = rst.x * Math.cos(angle) - rst.y * Math.sin(angle)
-        rst.y = rst.x * Math.sin(angle) + rst.y * Math.cos(angle)
+        
+        rst.x = this.x * Math.cos(angle) - this.y * Math.sin(angle)
+        rst.y = this.x * Math.sin(angle) + this.y * Math.cos(angle)
 
         return rst
     }
@@ -168,8 +168,8 @@ class Vector {
     rotationYAxis(angle){
         let rst = this.copy()
 
-        rst.x = rst.x * Math.cos(angle) + rst.z * Math.sin(angle)
-        rst.z = -rst.x * Math.sin(angle) + rst.z * Math.cos(angle)
+        rst.x = this.x * Math.cos(angle) + this.z * Math.sin(angle)
+        rst.z = -this.x * Math.sin(angle) + this.z * Math.cos(angle)
 
         return rst
     }
@@ -178,8 +178,8 @@ class Vector {
     rotationXAxis(angle){
         let rst = this.copy()
 
-        rst.y = rst.y * Math.cos(angle) - rst.z * Math.sin(angle)
-        rst.z = rst.y * Math.sin(angle) + rst.z * Math.cos(angle)
+        rst.y = this.y * Math.cos(angle) - this.z * Math.sin(angle)
+        rst.z = this.y * Math.sin(angle) + this.z * Math.cos(angle)
 
         return rst
     }

@@ -51,3 +51,7 @@ const choose = (A, B)=>{
 
     return (prob > 0.5) ? A : B
 }
+
+const degrees2Radians = angle => {
+    return angle * (Math.PI / 180.0)
+}
